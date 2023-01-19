@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appname
+  namespace: itsm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appname
+  template:
+    metadata:
+      labels:
+        app: appname
+    spec:
+      containers:
+        - name: redis
+          image: meidongauto-docker.pkg.coding.net/itsm/public/redis:latest
+          resources: 
+            limits:
+              cpu: 1000m
+              memory: 512Mi 
+            requests: 
+              cpu: 256m 
+              memory: 256Mi
+        - name: agent
+          image: meidongauto-docker.pkg.coding.net/itsm/private/configagent:0.1
+          resources: 
+            limits:
+              cpu: 1000m
+              memory: 512Mi 
+            requests: 
+              cpu: 256m 
+              memory: 256Mi
+          volumeMounts:
+            - name:  itsm-vwork-api-volumes
+              mountPath: /usr/app
+              subPath: config.json
+        - name: api
+          image: meidongauto-docker.pkg.coding.net/itsm/private/project-appname-flask:0.1
+          resources: 
+            limits:
+              cpu: 1000m
+              memory: 512Mi 
+            requests: 
+              cpu: 512m 
+              memory: 256Mi
+          ports:
+            - containerPort: 5000
+      volumes:
+        - name:  itsm-vwork-api-volumes
+          configMap:
+            name: itsm-appname-cname-config
+            defaultMode: 420
+      nodeSelector:
+        zone: group
+      imagePullSecrets: 
+        - name: itsm-secret-docker.coding
+
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: itsm-appname-cname-config
+data:
+  config.json: |
+    {
+      "appname": "itsm-appname-cname-config",   
+      "etcd":{
+          "host": [
+            "195.168.0.181:2379","196.168.173.210:2379",
+            "195.168.0.47:2379","195.168.0.29:2379"],
+          "user": "", 
+          "pwd": "", 
+          "root": "/itsm.appname/"
+      },
+      "config":{
+          "item":{
+              "itsmwebapi:VPNCONTROL":"http://195.168.0.24:30022/",
+          },
+          "etcdmap":{
+              "VPNCONTROL": "itsmwebapi:VPNCONTROL", 
+          }
+      }
+    }
+
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-appname-service
+spec:
+  type: NodePort
+  ports:
+  - name: api
+    port: 30000
+    targetPort: 5000
+    nodePort: 30000
+  selector:
+    app: appname
