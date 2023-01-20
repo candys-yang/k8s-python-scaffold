@@ -42,6 +42,7 @@ etcd 应使用集群中的3个节点或更多
 
 config 字段: itsm 为默认的配置键值，etcdmap 为配置中心映射的字段。 item 和 etcdmap 之间存在关联。
 
+Agent 源码： https://github.com/candys-yang/k8s-ConfigAgent-Sidecar
 
 ```yaml
 apiVersion: v1
