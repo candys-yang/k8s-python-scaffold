@@ -7,7 +7,13 @@ import redis
 
 
 class RedisClient:
-    ''' Redis 工厂函数 '''
+    ''' 
+    Redis 工厂函数 
+    
+    Attribute:
+        redisc:     redis操作客户端， redis class
+    '''
+
     def __init__(self, url) -> None:
         ''' 初始化工厂函数对象 '''
         self.redis_url = url
@@ -17,10 +23,12 @@ class RedisClient:
 
     def _ConnectionPool(self): 
         ''' 创建连接池 '''
-        return redis.ConnectionPool().from_url(self.redis_url)
+        return redis.ConnectionPool().from_url(self.redis_url, decode_components=True)
 
     def _Ping(self, retest = True, count = 0):
-        ''' 连接存活检查，一般使用默认参数调用即可，retest 是否在ping失败时重试。'''
+        ''' 
+        连接存活检查，retest 是否在ping失败时重试。
+        '''
         if count >= 3: raise "Connection Redis Failed"
         try:
             self.redisc.ping()
@@ -32,7 +40,9 @@ class RedisClient:
 
     def RedisClient(self): 
         ''' 实例化一个 Redis 客户端，用于 Redis 操作 '''
-        return redis.Redis(connection_pool= self.connection_pool, decode_responses=True)
+        return redis.Redis(
+            connection_pool= self.connection_pool, 
+            decode_responses=True, encoding='utf-8')
 
 class RedisOM:
     ''' Redis 对象映射 '''

@@ -3,12 +3,13 @@
 
 '''
 import base64
+import logging
 import datetime,time
 from base64 import b64encode, b64decode
 import hashlib
 from Cryptodome.Cipher import AES
 from Cryptodome.Random import get_random_bytes
-
+from sqlalchemy import create_engine
 
 class DataConversion:
     ''' 提供数据转换的类 '''
@@ -157,6 +158,27 @@ class DB:
             redata.append(t)
         return redata
 
+    def CheckMysql(self,url): 
+        '''
+        检查数据库可用性。 
+        '''  
+        try:
+             
+            engine = create_engine(url)
+            conn = engine.connect()
+            logging.info('Check Mysql Connect: Success')
+            for i in conn.execute('show global status;').fetchall(): 
+                if i[0] in [
+                    'Memory_used', 'Open_files', 'Open_tables', 
+                    'Qcache_total_blocks', 'Uptime', 
+                    'Threads_running', 'Innodb_page_size']:
+                    logging.info('Mysql Status: ' + str(i))
+            conn.close()
+        except Exception as e: 
+            logging.error('检查数据库连接时发生错误: ' + str(e))
+    
+    
+    
     pass
 
 

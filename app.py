@@ -3,7 +3,7 @@ import uuid
 import logging
 from flask import Flask, g, request
 
-from AppLib import AppTypes
+from AppLib import AppTypes, utils, Factory
 from Routes import *
 
 #日志格式
@@ -53,13 +53,6 @@ ROUTE_RULE = [
 
 
 
-
-
-
-
-
-
-
 if __name__ == '__main__': 
     # 应用配置
     app.config['JSON_AS_ASCII'] = False     #避免json中文乱码
@@ -72,6 +65,14 @@ if __name__ == '__main__':
 
     #日志
     logging.getLogger("werkzeug").setLevel(logging.WARNING)     # 屏蔽框架层面的INFO日志
+
+    # 启动检查
+    #   数据可可用性
+    utils.DB().CheckMysql(
+    Factory.RedisClient(
+        'redis://127.0.0.1/0').redisc.get('appname:MYSQL_MASTER').decode('utf-8')
+    )
+    
 
     # 运行服务
     app.run(host='0.0.0.0',port=5000)
