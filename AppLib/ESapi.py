@@ -73,7 +73,7 @@ class Base:
                 '_seq_no': 10, 
                 '_primary_term': 1}
         '''
-        data = IU.client.index(index=index_name, body=index_setting)
+        data = self.client.index(index=index_name, body=index_setting)
         return data
 
     def Base_DeleteIndex(self, index_name:str): 
