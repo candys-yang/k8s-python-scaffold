@@ -15,7 +15,7 @@ Readme文档的 >version 为 deploy.sh 打包的版本标记，用于版本发�
 
 ### 结构
 
-标准的脚手架结构主要由四个应用组成：
+标准的脚手架结构主要由三个应用组成：
 
 Agent 用于连接 ETCD 注册中心，监听和拉取最新的应用配置信息。
 
@@ -24,15 +24,6 @@ Flask 用于为外部提供应用的 api 接口。
 Redis  用于 pod 内的应用间数据交互。
 
 
-### 规范
-
-初始化 Pod 内的 Redis 连接对象，必须使用  LocalRedis 命名
-```
-import redis
-localpool = redis.ConnectionPool(host='127.0.0.1', port=6379, decode_responses=True)
-localredis = redis.Redis(host='localhost', port=6379, decode_responses=True)  
-
-```
 
 ### Agent
 

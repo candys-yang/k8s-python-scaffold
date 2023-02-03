@@ -78,10 +78,11 @@ data:
       },
       "config":{
           "item":{
-              "itsmwebapi:VPNCONTROL":"http://195.168.0.24:30022/",
+              "appname:MYSQL_MASTER":"mysql+pymysql://itsmwebapi:itsmwebapi@195.168.0.222/itsm?&autocommit=true",
+              ""
           },
           "etcdmap":{
-              "VPNCONTROL": "itsmwebapi:VPNCONTROL", 
+              "MYSQL_MASTER": "appname:MYSQL_MASTER", 
           }
       }
     }

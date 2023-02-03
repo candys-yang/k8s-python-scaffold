@@ -3,12 +3,13 @@
 
 '''
 import base64
+import logging
 import datetime,time
 from base64 import b64encode, b64decode
 import hashlib
 from Cryptodome.Cipher import AES
 from Cryptodome.Random import get_random_bytes
-
+from sqlalchemy import create_engine
 
 class DataConversion:
     ''' 提供数据转换的类 '''
@@ -144,20 +145,7 @@ class Security:
                 return False
 
             return decrypted.decode('UTF-8')
-
-
-class DB: 
-    ''' 数据库相关的工具库 '''
-    def SqlalchemyQueryResultToDict(self, row):
-        ''' 转换 Sqlalchemy 查询结果为 Dict 类型 '''
-        redata = []
-        for i in row:
-            t = i.__dict__.copy()
-            t.pop('_sa_instance_state')
-            redata.append(t)
-        return redata
-
-    pass
+    
 
 
 

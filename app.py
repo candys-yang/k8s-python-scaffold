@@ -3,7 +3,7 @@ import uuid
 import logging
 from flask import Flask, g, request
 
-from AppLib import AppTypes
+from AppLib import AppTypes, Mysqlapi, Redisapi
 from Routes import *
 
 #日志格式
@@ -53,13 +53,6 @@ ROUTE_RULE = [
 
 
 
-
-
-
-
-
-
-
 if __name__ == '__main__': 
     # 应用配置
     app.config['JSON_AS_ASCII'] = False     #避免json中文乱码
@@ -70,8 +63,18 @@ if __name__ == '__main__':
         logging.info("Add Url Rule: " + str(i))
         app.add_url_rule(i[0], view_func=i[1].as_view(i[0]))
 
-    #日志
-    logging.getLogger("werkzeug").setLevel(logging.WARNING)     # 屏蔽框架层面的INFO日志
+    # 日志
+    #   屏蔽框架层面的INFO日志
+    logging.getLogger("werkzeug").setLevel(logging.WARNING)     
+
+    # 启动检查
+    #   数据可可用性
+    Mysqlapi.Base(
+        Redisapi.Client('redis://127.0.0.1/0').redisc.get(
+            'appname:MYSQL_MASTER'
+        ).decode('utf-8')
+    ).CheckMysql()
+    
 
     # 运行服务
     app.run(host='0.0.0.0',port=5000)
