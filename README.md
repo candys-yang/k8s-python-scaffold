@@ -35,45 +35,5 @@ config 字段: itsm 为默认的配置键值，etcdmap 为配置中心映射的�
 
 Agent 源码： https://github.com/candys-yang/k8s-ConfigAgent-Sidecar
 
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: itsm-appname-cname-config
-data:
-  config.json: |
-    {
-      "appname": "itsm-appname-cname-config",   
-      "etcd":{
-          "host": [
-            "195.168.0.181:2379","196.168.173.210:2379",
-            "195.168.0.47:2379","195.168.0.29:2379"],
-          "user": "", 
-          "pwd": "", 
-          "root": "/itsm.appname/"
-      },
-      "config":{
-          "item":{
-              "itsmwebapi:VPNCONTROL":"http://195.168.0.24:30022/",
-          },
-          "etcdmap":{
-              "VPNCONTROL": "itsmwebapi:VPNCONTROL", 
-          }
-      }
-    }
-```
-
-
-```shell
-Etcd 配置参考：
-
-etcdctl user add itsmappname  # 创建用户
-etcdctl role add itsmappname  # 创建规则
-# 授权规则可读写 /itsm.appname/ 下的配置项
-etcdctl role grant-permission itsmappname readwrite /itsm.appname/ --prefix=true   
-etcdctl user grant-role itsmappname itsmappname # 授权用户规则
-
-etcdctl put /itsm.appname/VPNCONTROL "http://195.168.0.24:30022/"
-```
 
 
