@@ -145,41 +145,7 @@ class Security:
                 return False
 
             return decrypted.decode('UTF-8')
-
-
-class DB: 
-    ''' 数据库相关的工具库 '''
-    def SqlalchemyQueryResultToDict(self, row):
-        ''' 转换 Sqlalchemy 查询结果为 Dict 类型 '''
-        redata = []
-        for i in row:
-            t = i.__dict__.copy()
-            t.pop('_sa_instance_state')
-            redata.append(t)
-        return redata
-
-    def CheckMysql(self,url): 
-        '''
-        检查数据库可用性。 
-        '''  
-        try:
-             
-            engine = create_engine(url)
-            conn = engine.connect()
-            logging.info('Check Mysql Connect: Success')
-            for i in conn.execute('show global status;').fetchall(): 
-                if i[0] in [
-                    'Memory_used', 'Open_files', 'Open_tables', 
-                    'Qcache_total_blocks', 'Uptime', 
-                    'Threads_running', 'Innodb_page_size']:
-                    logging.info('Mysql Status: ' + str(i))
-            conn.close()
-        except Exception as e: 
-            logging.error('检查数据库连接时发生错误: ' + str(e))
     
-    
-    
-    pass
 
 
 
