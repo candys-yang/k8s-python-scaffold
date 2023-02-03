@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: appname
-  namespace: itsm
 spec:
   replicas: 1
   selector:
@@ -33,7 +32,7 @@ spec:
               cpu: 256m 
               memory: 256Mi
           volumeMounts:
-            - name:  itsm-vwork-api-volumes
+            - name:  appname-volumes
               mountPath: /usr/app
               subPath: config.json
         - name: api
@@ -48,14 +47,29 @@ spec:
           ports:
             - containerPort: 5000
       volumes:
-        - name:  itsm-vwork-api-volumes
+        - name:  appname-volumes
           configMap:
-            name: itsm-appname-cname-config
+            name: iappname-config
             defaultMode: 420
       nodeSelector:
         zone: group
       imagePullSecrets: 
-        - name: itsm-secret-docker.coding
+        - name: YourSecrets
+
+
+---
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v1
+metadata:
+  name: appname
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: appname
+    apiVersion: apps/v1
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
 
 
 ---
@@ -63,22 +77,22 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: itsm-appname-cname-config
+  name: appname-config
 data:
   config.json: |
     {
-      "appname": "itsm-appname-cname-config",   
+      "appname": "appname",   
       "etcd":{
           "host": [
-            "195.168.0.181:2379","196.168.173.210:2379",
-            "195.168.0.47:2379","195.168.0.29:2379"],
+            "127.0.0.1:2379"
+          ]
           "user": "", 
           "pwd": "", 
-          "root": "/itsm.appname/"
+          "root": "/appname/"
       },
       "config":{
           "item":{
-              "appname:MYSQL_MASTER":"mysql+pymysql://itsmwebapi:itsmwebapi@195.168.0.222/itsm?&autocommit=true",
+              "appname:MYSQL_MASTER":"mysql+pymysql://user:password@195.168.0.222/dbname?&autocommit=true",
               ""
           },
           "etcdmap":{
