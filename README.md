@@ -6,7 +6,7 @@
 
 版本策略，标准修改将增加子版本号，结构上的更改增加主版本号
 
-__Code Version: 1.0__
+__Code Version: 2.0__
 
 Readme文档的 >version 为 deploy.sh 打包的版本标记，用于版本发布。
 
